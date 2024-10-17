@@ -2,23 +2,58 @@
 
 internal class ProgrammingApp
 {
+    private static ProgrammingApp? _instance;
+
+    private Program _loadedProgram;
+
+    private ProgrammingApp() {}
+
     static void Main(string[] args)
     {
-        Board board = new(3);
-        Program program = new (new List<ICommand>
+        ProgrammingApp.GetInstance().Run();
+    }
+
+    public void Run()
+    {
+        bool wantToExit = false;
+
+        while (!wantToExit)
         {
-            new MoveCommand(10),
-            new TurnCommand("right"),
-            new RepeatCommand(2, new List<ICommand>
+            string[] input = Console.ReadLine().Split(' ');
+
+            switch (input[0])
             {
-                new MoveCommand(10),
-                new TurnCommand("right")
-            }),
-            new MoveCommand(10),
-            new TurnCommand("right")
-        });
-        Console.WriteLine($"Starting state {board}");
-        program.Run(board);
-        Console.WriteLine($"End state {board}");
+                case "exit":
+                    wantToExit = true;
+                    break;
+                case "load":
+                    switch (input[1])
+                    {
+                        case "basic":
+                            _loadedProgram = Program.BasicProgram;
+                            break;
+                        case "advanced":
+                            _loadedProgram = Program.AdvancedProgram;
+                            break;
+                        case "expert":
+                            _loadedProgram = Program.ExpertProgram;
+                            break;
+                        default:
+                            Console.WriteLine("Invalid program name");
+                            break;
+                    }
+                    break;
+                case "run":
+                    Board board = new();
+                    _loadedProgram.Run(board);
+                    Console.WriteLine($"End state {board}");
+                    break;
+            }
+        }
+    }
+
+    public static ProgrammingApp GetInstance()
+    {
+        return _instance ??= new ProgrammingApp();
     }
 }
