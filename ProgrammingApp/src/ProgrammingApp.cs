@@ -27,6 +27,7 @@ internal class ProgrammingApp
                     wantToExit = true;
                     break;
                 case "load":
+                    
                     switch (input[1])
                     {
                         case "basic":
@@ -39,12 +40,13 @@ internal class ProgrammingApp
                             _loadedProgram = Program.ExpertProgram;
                             break;
                         default:
-                            Console.WriteLine("Invalid program name");
+                            _loadedProgram = ProgramParser.ParseFromTextFile(input[1]);
                             break;
                     }
                     break;
                 case "run":
                     Board board = new();
+                    Console.WriteLine(_loadedProgram.TextualTrace);
                     _loadedProgram.Run(board);
                     Console.WriteLine($"End state {board}");
                     break;
