@@ -6,6 +6,10 @@ public class TurnCommand : ICommand
 
     public TurnCommand(string turnDirection)
     {
+        if (turnDirection != "left" && turnDirection != "right")
+        {
+            throw new ArgumentException("Invalid turn direction");
+        }
         _turnDirection = turnDirection;
     }
 
