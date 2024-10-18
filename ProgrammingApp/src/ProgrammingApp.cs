@@ -40,7 +40,7 @@ internal class ProgrammingApp
                             _loadedProgram = Program.ExpertProgram;
                             break;
                         default:
-                            _loadedProgram = ProgramParser.ParseFromTextFile(input[1]);
+                            _loadedProgram = new ProgramParser(input[1]).Parse();
                             break;
                     }
                     break;

@@ -1,60 +1,121 @@
-﻿namespace ProgrammingApp
+﻿namespace ProgrammingApp;
+
+public class ProgramParser
 {
-    internal class ProgramParser
+    private readonly string[] _lines;
+    private int _currentLineIndex = 0;
+    private readonly Stack<int> _indentStack = new();
+
+    public ProgramParser(string path)
     {
-        private static StreamReader sr;
-        private static string line;
-        public static Program ParseFromTextFile(string fileName)
+        _lines = File.ReadAllLines(path);
+        _indentStack.Push(0);
+    }
+
+    public Program Parse()
+    {
+        var commands = ParseBlock();
+        return new Program(commands);
+    }
+
+    private List<ICommand> ParseBlock()
+    {
+        List<ICommand> commands = new();
+
+        while (_currentLineIndex < _lines.Length)
         {
-            sr = new StreamReader(fileName);
-            List<ICommand> commands = new List<ICommand>();
-            line = sr.ReadLine();
-            while (line != null)
+            var line = _lines[_currentLineIndex];
+
+            if (string.IsNullOrWhiteSpace(line))
             {
-                string[] command = line.Split(' ');
-                switch (command[0])
-                {
-                    case "Move":
-                        commands.Add(new MoveCommand(int.Parse(command[1])));
-                        break;
-                    case "Turn":
-                        commands.Add(new TurnCommand(command[1]));
-                        break;
-                    case "Repeat":
-                        commands.AddRange(RepeatCommand(int.Parse(command[1]), int.Parse(command[2])));
-                        break;
-                    
-                }
-                line = sr.ReadLine();
+                _currentLineIndex++;
+                continue;
             }
-            return new Program(commands);
+
+            var actualIndent = GetIndentation(line);
+            var expectedIndent = _indentStack.Peek();
+
+            if (actualIndent < expectedIndent)
+            {
+                _indentStack.Pop();
+                break;
+            }
+            if (actualIndent > expectedIndent)
+            {
+                throw new FormatException("Invalid indentation");
+            }
+
+            commands.Add(ParseCommand(line));
+            _currentLineIndex++;
         }
 
-        private static List<ICommand> RepeatCommand(int commandCount, int repeatAmount)
-        {
-            List<ICommand> commands = new List<ICommand>();
-            for (int i = 0; i < commandCount; i++)
-            {
-                line = sr.ReadLine();
-                string[] command = line.Split(' ');
-                switch (command[0])
-                {
-                    case "Move":
-                        commands.Add(new MoveCommand(int.Parse(command[1])));
-                        break;
-                    case "Turn":
-                        commands.Add(new TurnCommand(command[1]));
-                        break;
-                    case "Repeat":
-                        commands.AddRange(RepeatCommand(int.Parse(command[1]), int.Parse(command[2])));
-                        break;
-                }
+        return commands;
+    }
 
-            }
-            List<ICommand> result = new List<ICommand>();
-            for (int i = 0; i < repeatAmount; i++)
-                result.AddRange(commands);
-            return result;
+    private ICommand ParseCommand(string line)
+    {
+        var trimmedLine = line.Trim();
+        var parts = trimmedLine.Split(' ');
+
+        return parts[0] switch
+        {
+            "Move" => ParseMove(parts),
+            "Turn" => ParseTurn(parts),
+            "Repeat" => ParseRepeat(parts),
+            _ => throw new FormatException("Invalid command")
+        };
+    }
+
+    private ICommand ParseMove(string[] parts)
+    {
+        if (parts.Length != 2)
+        {
+            throw new FormatException("Invalid move command");
         }
+
+        return new MoveCommand(int.Parse(parts[1]));
+    }
+
+    private ICommand ParseTurn(string[] parts)
+    {
+        if (parts.Length != 2)
+        {
+            throw new FormatException("Invalid turn command");
+        }
+
+        return new TurnCommand(parts[1]);
+    }
+
+    private ICommand ParseRepeat(string[] parts)
+    {
+        if (parts.Length != 2)
+        {
+            throw new FormatException("Invalid repeat command");
+        }
+
+        _indentStack.Push(GetIndentation(_lines[_currentLineIndex + 1]));
+        _currentLineIndex++;
+
+        var count = int.Parse(parts[1]);
+        var block = ParseBlock();
+        return new RepeatCommand(count, block);
+    }
+
+    private int GetIndentation(string line)
+    {
+        var indent = 0;
+        foreach (var c in line)
+        {
+            if (c == ' ')
+            {
+                indent++;
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        return indent;
     }
 }
