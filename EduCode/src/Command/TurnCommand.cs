@@ -1,6 +1,9 @@
-﻿namespace ProgrammingApp;
+﻿using EduCode.Board;
+using EduCode.Location;
 
-public class TurnCommand : ICommand
+namespace EduCode.Command;
+
+public class TurnCommand : IEduCommand
 {
     private readonly string _turnDirection;
 
@@ -13,7 +16,9 @@ public class TurnCommand : ICommand
         _turnDirection = turnDirection;
     }
 
-    public void Execute(Board board)
+    public int MaximumDepth => 0;
+
+    public void Execute(EduBoard board)
     {
 
         board.Direction = _turnDirection switch
@@ -23,14 +28,16 @@ public class TurnCommand : ICommand
                 Direction.North => Direction.West,
                 Direction.West => Direction.South,
                 Direction.South => Direction.East,
-                Direction.East => Direction.North
+                Direction.East => Direction.North,
+                _ => throw new ArgumentException("Invalid board direction")
             },
             "right" => board.Direction switch
             {
                 Direction.North => Direction.East,
                 Direction.East => Direction.South,
                 Direction.South => Direction.West,
-                Direction.West => Direction.North
+                Direction.West => Direction.North,
+                _ => throw new ArgumentException("Invalid board direction")
             },
             _ => throw new ArgumentException("Invalid turn direction")
         };

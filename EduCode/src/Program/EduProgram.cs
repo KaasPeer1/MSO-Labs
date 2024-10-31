@@ -1,17 +1,24 @@
-﻿namespace ProgrammingApp;
+﻿using EduCode.Board;
+using EduCode.Command;
 
-public class Program
+namespace EduCode.Program;
+
+public class EduProgram
 {
-    private readonly List<ICommand> _commands;
+    private readonly List<IEduCommand> _commands;
 
-    public Program(List<ICommand> commands)
+    public EduProgram(List<IEduCommand> commands)
     {
         _commands = commands;
     }
 
     public string TextualTrace => _commands.Count == 0 ? "" : _commands.Select(c => c.ToString()).Aggregate((a, b) => $"{a}, {b}") + ".";
 
-    public static Program BasicProgram => new(new List<ICommand>
+    public int CommandCount => _commands.Count;
+    
+    public int MaximumDepth => _commands.Count == 0 ? 0 : _commands.Max(c => c.MaximumDepth);
+
+    public static EduProgram BasicProgram => new(new List<IEduCommand>
     {
         new MoveCommand(5),
         new TurnCommand("left"),
@@ -21,11 +28,11 @@ public class Program
         new MoveCommand(2)
     });
 
-    public static Program AdvancedProgram => new(new List<ICommand>
+    public static EduProgram AdvancedProgram => new(new List<IEduCommand>
     {
         new MoveCommand(1),
         new TurnCommand("right"),
-        new RepeatCommand(2, new List<ICommand>
+        new RepeatCommand(2, new List<IEduCommand>
         {
             new MoveCommand(1),
             new TurnCommand("right"),
@@ -36,12 +43,12 @@ public class Program
         new TurnCommand("right")
     });
 
-    public static Program ExpertProgram => new(new List<ICommand>
+    public static EduProgram ExpertProgram => new(new List<IEduCommand>
     {
         new TurnCommand("right"),
-        new RepeatCommand(5, new List<ICommand>
+        new RepeatCommand(5, new List<IEduCommand>
         {
-            new RepeatCommand(2, new List<ICommand>
+            new RepeatCommand(2, new List<IEduCommand>
             {
                 new TurnCommand("right"),
                 new MoveCommand(1)
@@ -52,7 +59,7 @@ public class Program
         new TurnCommand("right")
     });
 
-    public void Run(Board board)
+    public void Run(EduBoard board)
     {
         foreach (var command in _commands)
         {

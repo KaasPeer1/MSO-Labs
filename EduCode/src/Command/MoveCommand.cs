@@ -1,6 +1,9 @@
-﻿namespace ProgrammingApp;
+﻿using EduCode.Board;
+using EduCode.Location;
 
-public class MoveCommand : ICommand
+namespace EduCode.Command;
+
+public class MoveCommand : IEduCommand
 {
     private readonly int _amount;
 
@@ -9,7 +12,9 @@ public class MoveCommand : ICommand
         _amount = amount;
     }
 
-    public void Execute(Board board)
+    public int MaximumDepth => 0;
+
+    public void Execute(EduBoard board)
     {
         board.Position += Vector.FromDirection(board.Direction) * _amount;
     }

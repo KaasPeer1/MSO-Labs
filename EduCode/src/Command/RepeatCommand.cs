@@ -1,10 +1,12 @@
-﻿namespace ProgrammingApp;
+﻿using EduCode.Board;
 
-public class RepeatCommand : ICommand
+namespace EduCode.Command;
+
+public class RepeatCommand : IEduCommand
 {
-    private readonly List<ICommand> _commands = new ();
+    private readonly List<IEduCommand> _commands = new();
 
-    public RepeatCommand(int times, List<ICommand> commands)
+    public RepeatCommand(int times, List<IEduCommand> commands)
     {
         for (var i = 0; i < times; i++)
         {
@@ -12,7 +14,9 @@ public class RepeatCommand : ICommand
         }
     }
 
-    public void Execute(Board board)
+    public int MaximumDepth => _commands.Count == 0 ? 0 : _commands.Max(c => c.MaximumDepth) + 1;
+
+    public void Execute(EduBoard board)
     {
         foreach (var command in _commands)
         {

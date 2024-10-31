@@ -1,4 +1,4 @@
-﻿namespace ProgrammingApp;
+﻿namespace EduCode.Location;
 
 public readonly struct Vector
 {

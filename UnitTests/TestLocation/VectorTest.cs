@@ -1,6 +1,6 @@
-﻿using ProgrammingApp;
+﻿using EduCode.Location;
 
-namespace TestProgrammingApp.TestBoard;
+namespace UnitTests.TestLocation;
 
 public class VectorTest
 {

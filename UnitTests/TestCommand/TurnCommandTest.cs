@@ -1,11 +1,11 @@
-﻿using ProgrammingApp;
+﻿using EduCode.Board;
+using EduCode.Command;
+using EduCode.Location;
 
-namespace TestProgrammingApp.TestCommand;
+namespace UnitTests.TestCommand;
 
 public class TurnCommandTest
 {
-
-
     [Theory]
     [InlineData(Direction.North, "right", Direction.East)]
     [InlineData(Direction.East, "right", Direction.South)]
@@ -17,7 +17,7 @@ public class TurnCommandTest
     [InlineData(Direction.East, "left", Direction.North)]
     public void TestExecute(Direction initialDirection, string turnDirection, Direction expectedDirection)
     {
-        var board = new Board { Direction = initialDirection };
+        var board = new EduBoard(3) { Direction = initialDirection };
         var command = new TurnCommand(turnDirection);
 
         command.Execute(board);

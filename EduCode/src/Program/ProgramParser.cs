@@ -1,4 +1,7 @@
-﻿namespace ProgrammingApp;
+﻿using System.IO;
+using EduCode.Command;
+
+namespace EduCode.Program;
 
 public class ProgramParser
 {
@@ -12,15 +15,15 @@ public class ProgramParser
         _indentStack.Push(0);
     }
 
-    public Program Parse()
+    public EduProgram Parse()
     {
         var commands = ParseBlock();
-        return new Program(commands);
+        return new EduProgram(commands);
     }
 
-    private List<ICommand> ParseBlock()
+    private List<IEduCommand> ParseBlock()
     {
-        List<ICommand> commands = new();
+        List<IEduCommand> commands = new();
 
         while (_currentLineIndex < _lines.Length)
         {
@@ -52,7 +55,7 @@ public class ProgramParser
         return commands;
     }
 
-    private ICommand ParseCommand(string line)
+    private IEduCommand ParseCommand(string line)
     {
         var trimmedLine = line.Trim();
         var parts = trimmedLine.Split(' ');
@@ -66,7 +69,7 @@ public class ProgramParser
         };
     }
 
-    private ICommand ParseMove(string[] parts)
+    private IEduCommand ParseMove(string[] parts)
     {
         if (parts.Length != 2)
         {
@@ -76,7 +79,7 @@ public class ProgramParser
         return new MoveCommand(int.Parse(parts[1]));
     }
 
-    private ICommand ParseTurn(string[] parts)
+    private IEduCommand ParseTurn(string[] parts)
     {
         if (parts.Length != 2)
         {
@@ -86,7 +89,7 @@ public class ProgramParser
         return new TurnCommand(parts[1]);
     }
 
-    private ICommand ParseRepeat(string[] parts)
+    private IEduCommand ParseRepeat(string[] parts)
     {
         if (parts.Length != 2)
         {
@@ -101,7 +104,7 @@ public class ProgramParser
         return new RepeatCommand(count, block);
     }
 
-    private int GetIndentation(string line)
+    private static int GetIndentation(string line)
     {
         var indent = 0;
         foreach (var c in line)
