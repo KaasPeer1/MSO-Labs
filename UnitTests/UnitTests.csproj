@@ -21,9 +21,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="TestLocation\" />
-    <Folder Include="TestBoard\" />
-    <Folder Include="TestProgram\" />
+    <Folder Include="TestModel\TestLocation\" />
+    <Folder Include="TestModel\TestBoard\" />
+    <Folder Include="TestModel\TestProgram\" />
   </ItemGroup>
 
   <ItemGroup>

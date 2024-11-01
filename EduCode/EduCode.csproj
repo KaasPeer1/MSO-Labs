@@ -13,9 +13,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="src\Board\" />
-    <Folder Include="src\Command\" />
-    <Folder Include="src\WPFCommand\" />
+    <Folder Include="src\Model\Board\" />
+    <Folder Include="src\Model\Command\" />
+    <Folder Include="src\ViewModel\Command\" />
   </ItemGroup>
 
 </Project>
