@@ -17,6 +17,7 @@ public class MainViewModel : ViewModelBase
     private EduProgram? _program;
     private string _output = "";
     private string _commandsText = "";
+    private Position[]? _trace;
 
     public MainViewModel()
     {
@@ -43,6 +44,12 @@ public class MainViewModel : ViewModelBase
     {
         get => _commandsText;
         private set => SetField(ref _commandsText, value);
+    }
+
+    public Position[]? Trace
+    {
+        get => _trace;
+        private set => SetField(ref _trace, value);
     }
 
     public ICommand LoadCommand => new DelegateCommand(LoadProgram);
@@ -89,7 +96,7 @@ public class MainViewModel : ViewModelBase
         }
 
         if (Program == null) return;
-        Program.Run(_board);
+        _trace = Program.Run(_board);
         Output = $"Textual trace: {Program.TextualTrace}\nEnd state: {_board}";
     }
 

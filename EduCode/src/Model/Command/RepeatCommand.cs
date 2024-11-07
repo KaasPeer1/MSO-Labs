@@ -1,4 +1,6 @@
-﻿using EduCode.Model.Board;
+﻿using System.Collections;
+using EduCode.Model.Board;
+using EduCode.Model.Location;
 
 namespace EduCode.Model.Command;
 
@@ -22,12 +24,14 @@ public class RepeatCommand : IEduCommand
 
     public int MaximumDepth => _commands.Count == 0 ? 0 : _commands.Max(c => c.MaximumDepth) + 1;
 
-    public void Execute(EduBoard board)
+    public Position[] Execute(EduBoard board)
     {
+        List<Position> positions = new ();
         foreach (var command in _commands)
         {
-            command.Execute(board);
+            positions.AddRange(command.Execute(board));
         }
+        return positions.ToArray();
     }
 
     public override string ToString()

@@ -1,6 +1,9 @@
-﻿using System.Text;
+﻿using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using System.Text;
 using EduCode.Model.Board;
 using EduCode.Model.Command;
+using EduCode.Model.Location;
 
 namespace EduCode.Model.Program;
 
@@ -60,12 +63,15 @@ public class EduProgram
         new TurnCommand("right")
     });
 
-    public void Run(EduBoard board)
+    public Position[] Run(EduBoard board)
     {
+        List<Position> trace = new();
+        trace.Add(board.Position);
         foreach (var command in _commands)
         {
-            command.Execute(board);
+            trace.AddRange(command.Execute(board));
         }
+        return trace.ToArray();
     }
 
     public override string ToString()

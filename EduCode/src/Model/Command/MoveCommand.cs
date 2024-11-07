@@ -14,9 +14,10 @@ public class MoveCommand : IEduCommand
 
     public int MaximumDepth => 0;
 
-    public void Execute(EduBoard board)
+    public Position[] Execute(EduBoard board)
     {
         board.Position += Vector.FromDirection(board.Direction) * _amount;
+        return new[] {board.Position};
     }
 
     public override string ToString()

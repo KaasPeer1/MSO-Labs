@@ -71,6 +71,7 @@ public class BoardRenderer : INotifyPropertyChanged
         DrawBorder(context);
         DrawGridLines(context);
         DrawCharacter(context);
+        DrawTrace(context);
     }
 
     private void DrawBorder(DrawingContext context)
@@ -98,13 +99,26 @@ public class BoardRenderer : INotifyPropertyChanged
     {
         Pen pen = new(Brushes.Black, 1);
 
-        int xPos = _viewModel.Position.X * _width / _viewModel.Size + _width / _viewModel.Size / 2;
-        int yPos = _viewModel.Position.Y * _height / _viewModel.Size + _height / _viewModel.Size / 2;
-        Point center = new(xPos, yPos);
+        Point center = GetPoint(_viewModel.Position);
         int xyRadius = _width / _viewModel.Size / 2;
 
         context.DrawEllipse(Brushes.Red, pen, center, xyRadius, xyRadius);
         context.DrawLine(pen, center, center + GetDirectionVector() * xyRadius);
+    }
+
+    private void DrawTrace(DrawingContext context)
+    {
+        var trace = _viewModel.Trace;
+        if (trace == null || trace.Length == 0) return;
+
+        Pen pen = new(Brushes.Blue, 5);
+
+        for (int i = 1; i < trace.Length; i++)
+        {
+            var from = trace[i - 1];
+            var to = trace[i];
+            context.DrawLine(pen, GetPoint(from), GetPoint(to));
+        }
     }
 
     private Vector GetDirectionVector()
@@ -117,6 +131,11 @@ public class BoardRenderer : INotifyPropertyChanged
             Direction.West => new Vector(-1, 0),
             _ => throw new InvalidOperationException("Invalid direction.")
         };
+    }
+
+    private Point GetPoint(Position position)
+    {
+        return new(position.X * _width / _viewModel.Size + _width / _viewModel.Size / 2, position.Y * _height / _viewModel.Size + _height / _viewModel.Size / 2);
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;

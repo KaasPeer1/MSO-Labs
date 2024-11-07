@@ -18,9 +18,8 @@ public class TurnCommand : IEduCommand
 
     public int MaximumDepth => 0;
 
-    public void Execute(EduBoard board)
+    public Position[] Execute(EduBoard board)
     {
-
         board.Direction = _turnDirection switch
         {
             "left" => board.Direction switch
@@ -41,6 +40,7 @@ public class TurnCommand : IEduCommand
             },
             _ => throw new ArgumentException("Invalid turn direction")
         };
+        return new[] {board.Position};
     }
 
     public override string ToString()
