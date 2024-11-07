@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.IO;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -6,6 +7,7 @@ using EduCode.Model.Board;
 using EduCode.Model.Location;
 using EduCode.Model.Program;
 using EduCode.ViewModel.Command;
+using Microsoft.Win32;
 
 namespace EduCode.ViewModel;
 
@@ -44,9 +46,23 @@ public class MainViewModel : ViewModelBase
     }
 
     public ICommand LoadCommand => new DelegateCommand(LoadProgram);
+    public ICommand LoadFileCommand => new DelegateCommand(LoadProgramFromFile);
     public ICommand RunCommand => new DelegateCommand(RunProgram);
     public ICommand ResetCommand => new DelegateCommand(ResetBoard);
     public ICommand MetricsCommand => new DelegateCommand(OutputMetrics);
+
+    private void LoadProgramFromFile(object? o)
+    {
+        var dialog = new OpenFileDialog
+        {
+            Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*",
+        };
+
+        if (dialog.ShowDialog() == true)
+        {
+            LoadProgram(File.ReadAllText(dialog.FileName));
+        }
+    }
 
     private void LoadProgram(object? o)
     {
@@ -55,9 +71,9 @@ public class MainViewModel : ViewModelBase
             "basic" => EduProgram.BasicProgram,
             "advanced" => EduProgram.AdvancedProgram,
             "expert" => EduProgram.ExpertProgram,
-            _ => throw new ArgumentException("Can't load this program.")
+            _ => ProgramParser.ParseString(o as string ?? "")
         };
-        CommandsText = Program.ToString();
+        CommandsText = Program?.ToString() ?? "";
     }
 
     private void RunProgram(object? o)
