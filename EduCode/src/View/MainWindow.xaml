@@ -12,10 +12,13 @@
             <Menu DockPanel.Dock="Top">
                 <MenuItem Header="File">
                     <MenuItem Header="Load Program">
-                        <MenuItem Header="From File" Command="{Binding Path=LoadFileCommand}"/>
-                        <MenuItem Header="Basic Program" Command="{Binding Path=LoadCommand}" CommandParameter="basic"/>
-                        <MenuItem Header="Advanced Program" Command="{Binding Path=LoadCommand}" CommandParameter="advanced"/>
-                        <MenuItem Header="Expert Program" Command="{Binding Path=LoadCommand}" CommandParameter="expert"/>
+                        <MenuItem Header="From File" Command="{Binding Path=LoadProgramFromFileCommand}"/>
+                        <MenuItem Header="Basic Program" Command="{Binding Path=LoadProgramCommand}" CommandParameter="basic"/>
+                        <MenuItem Header="Advanced Program" Command="{Binding Path=LoadProgramCommand}" CommandParameter="advanced"/>
+                        <MenuItem Header="Expert Program" Command="{Binding Path=LoadProgramCommand}" CommandParameter="expert"/>
+                    </MenuItem>
+                    <MenuItem Header="Load Exercise">
+                        <MenuItem Header="From File" Command="{Binding Path=LoadExerciseFromFileCommand}"/>
                     </MenuItem>
                 </MenuItem>
             </Menu>

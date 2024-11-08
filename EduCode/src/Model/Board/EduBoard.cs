@@ -7,16 +7,19 @@ namespace EduCode.Model.Board;
 public class EduBoard : INotifyPropertyChanged
 {
     private Position _position = new(0, 0);
-    private Direction _direction;
+    private Direction _direction = Direction.East;
     private int _size;
+    private List<Position> _walls;
+    private Position? _endPosition;
 
-    public EduBoard(int size, Direction direction = Direction.East)
+    public EduBoard(int size, IEnumerable<Position> wallPositions, Position? endPosition = null)
     {
         Size = size;
-        _direction = direction;
+        _walls = wallPositions.ToList();
+        _endPosition = endPosition;
     }
 
-    public void Reset(int size = -1, Direction direction = Direction.East)
+    public void Reset(int size = -1, IEnumerable<Position>? wallPositions = null, Position? endPosition = null)
     {
         if (size != -1)
         {
@@ -28,7 +31,10 @@ public class EduBoard : INotifyPropertyChanged
         }
 
         Position = new Position(0, 0);
-        Direction = direction;
+        Direction = Direction.East;
+
+        if (wallPositions != null) Walls = wallPositions.ToList();
+        if (endPosition != null) _endPosition = endPosition;
     }
 
     public Position Position
@@ -47,6 +53,25 @@ public class EduBoard : INotifyPropertyChanged
     {
         get => _size;
         set => SetField(ref _size, value);
+    }
+
+    public List<Position> Walls
+    {
+        get => _walls;
+        set => SetField(ref _walls, value);
+    }
+
+    public bool IsWallAhead()
+    {
+        var ahead = Position + Vector.FromDirection(Direction);
+        var aheadIsWall = Walls.Contains(ahead);
+        return aheadIsWall;
+    }
+
+    public bool IsInEndPosition()
+    {
+        if (_endPosition == null) return false;
+        return (Position.Equals(_endPosition.Value));
     }
 
     public override string ToString()

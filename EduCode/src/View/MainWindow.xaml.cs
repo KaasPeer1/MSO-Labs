@@ -68,10 +68,22 @@ public class BoardRenderer : INotifyPropertyChanged
 
     private void DrawBoard(DrawingContext context)
     {
+        DrawWalls(context);
         DrawBorder(context);
         DrawGridLines(context);
         DrawCharacter(context);
         DrawTrace(context);
+    }
+
+    private void DrawWalls(DrawingContext context)
+    {
+        Brush brush = new SolidColorBrush(Colors.Coral);
+        foreach (var wall in _viewModel.Walls)
+        {
+            Point topLeft = new(wall.X * _width / _viewModel.Size, wall.Y * _height / _viewModel.Size);
+            Point bottomRight = new((wall.X + 1) * _width / _viewModel.Size, (wall.Y + 1) * _height / _viewModel.Size);
+            context.DrawRectangle(brush, null, new Rect(topLeft, bottomRight));
+        }
     }
 
     private void DrawBorder(DrawingContext context)
@@ -99,8 +111,8 @@ public class BoardRenderer : INotifyPropertyChanged
     {
         Pen pen = new(Brushes.Black, 1);
 
-        Point center = GetPoint(_viewModel.Position);
-        int xyRadius = _width / _viewModel.Size / 2;
+        Point center = GetCenterPoint(_viewModel.Position);
+        int xyRadius = (int)(_width / _viewModel.Size / 2.2);
 
         context.DrawEllipse(Brushes.Red, pen, center, xyRadius, xyRadius);
         context.DrawLine(pen, center, center + GetDirectionVector() * xyRadius);
@@ -117,7 +129,7 @@ public class BoardRenderer : INotifyPropertyChanged
         {
             var from = trace[i - 1];
             var to = trace[i];
-            context.DrawLine(pen, GetPoint(from), GetPoint(to));
+            context.DrawLine(pen, GetCenterPoint(from), GetCenterPoint(to));
         }
     }
 
@@ -133,7 +145,7 @@ public class BoardRenderer : INotifyPropertyChanged
         };
     }
 
-    private Point GetPoint(Position position)
+    private Point GetCenterPoint(Position position)
     {
         return new(position.X * _width / _viewModel.Size + _width / _viewModel.Size / 2, position.Y * _height / _viewModel.Size + _height / _viewModel.Size / 2);
     }

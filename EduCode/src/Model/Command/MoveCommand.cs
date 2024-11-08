@@ -9,6 +9,10 @@ public class MoveCommand : IEduCommand
 
     public MoveCommand(int amount)
     {
+        if (amount < 0)
+        {
+            throw new ArgumentException("Amount must be non-negative.");
+        }
         _amount = amount;
     }
 
@@ -16,7 +20,12 @@ public class MoveCommand : IEduCommand
 
     public Position[] Execute(EduBoard board)
     {
-        board.Position += Vector.FromDirection(board.Direction) * _amount;
+        var remaining = _amount;
+        while (!board.IsWallAhead() && remaining > 0)
+        {
+            board.Position += Vector.FromDirection(board.Direction);
+            remaining--;
+        }
         return new[] {board.Position};
     }
 

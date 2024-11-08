@@ -13,7 +13,7 @@ namespace EduCode.ViewModel;
 
 public class MainViewModel : ViewModelBase
 {
-    private readonly EduBoard _board = new(5);
+    private readonly EduBoard _board = new(10, new Position[] { new Position(3, 0) });
     private EduProgram? _program;
     private string _output = "";
     private string _commandsText = "";
@@ -27,6 +27,7 @@ public class MainViewModel : ViewModelBase
     public Position Position => _board.Position;
     public Direction Direction => _board.Direction;
     public int Size => _board.Size;
+    public List<Position> Walls => _board.Walls;
 
     public EduProgram? Program
     {
@@ -52,8 +53,9 @@ public class MainViewModel : ViewModelBase
         private set => SetField(ref _trace, value);
     }
 
-    public ICommand LoadCommand => new DelegateCommand(LoadProgram);
-    public ICommand LoadFileCommand => new DelegateCommand(LoadProgramFromFile);
+    public ICommand LoadProgramCommand => new DelegateCommand(LoadProgram);
+    public ICommand LoadProgramFromFileCommand => new DelegateCommand(LoadProgramFromFile);
+    public ICommand LoadExerciseFromFileCommand => new DelegateCommand(LoadExerciseFromFile);
     public ICommand RunCommand => new DelegateCommand(RunProgram);
     public ICommand ResetCommand => new DelegateCommand(ResetBoard);
     public ICommand MetricsCommand => new DelegateCommand(OutputMetrics);
@@ -103,7 +105,29 @@ public class MainViewModel : ViewModelBase
     private void ResetBoard(object? o)
     {
         _board.Reset();
+        _trace = null;
         Output = "";
+    }
+
+    private void LoadExerciseFromFile(object? o)
+    {
+        LoadProgram("");
+
+        var dialog = new OpenFileDialog
+        {
+            Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*",
+        };
+
+        if (dialog.ShowDialog() == true)
+        {
+            LoadExercise(File.ReadAllText(dialog.FileName));
+        }
+    }
+
+    private void LoadExercise(string input)
+    {
+        GridParser.ParseFromString(input, out var size, out var walls, out var endPosition);
+        _board.Reset(size, walls, endPosition);
     }
 
     private void OutputMetrics(object? o)
