@@ -11,6 +11,7 @@
         <WrapPanel DockPanel.Dock="Top">
             <Menu DockPanel.Dock="Top">
                 <MenuItem Header="File">
+                    <MenuItem Header="Save Program" Command="{Binding Path=SaveProgramCommand}" CommandParameter="{Binding ElementName=TxtBoxProgram, Path=Text}"/>
                     <MenuItem Header="Load Program">
                         <MenuItem Header="From File" Command="{Binding Path=LoadProgramFromFileCommand}"/>
                         <MenuItem Header="Basic Program" Command="{Binding Path=LoadProgramCommand}" CommandParameter="basic"/>

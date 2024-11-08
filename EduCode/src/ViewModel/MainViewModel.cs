@@ -55,12 +55,33 @@ public class MainViewModel : ViewModelBase
         private set => SetField(ref _trace, value);
     }
 
+    public ICommand SaveProgramCommand => new DelegateCommand(SaveProgram);
     public ICommand LoadProgramCommand => new DelegateCommand(LoadProgram);
     public ICommand LoadProgramFromFileCommand => new DelegateCommand(LoadProgramFromFile);
     public ICommand LoadExerciseFromFileCommand => new DelegateCommand(LoadExerciseFromFile);
     public ICommand RunCommand => new DelegateCommand(RunProgram);
     public ICommand ResetCommand => new DelegateCommand(ResetBoard);
     public ICommand MetricsCommand => new DelegateCommand(OutputMetrics);
+
+    private void SaveProgram(object? o)
+    {
+        LoadProgramFromText(o);
+        if (Program == null)
+        {
+            MessageBox.Show("No program to save.");
+            return;
+        }
+
+        var dialog = new SaveFileDialog
+        {
+            Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*",
+        };
+
+        if (dialog.ShowDialog() == true)
+        {
+            File.WriteAllText(dialog.FileName, CommandsText);
+        }
+    }
 
     private void LoadProgramFromFile(object? o)
     {
@@ -71,7 +92,7 @@ public class MainViewModel : ViewModelBase
 
         if (dialog.ShowDialog() == true)
         {
-            LoadProgram(File.ReadAllText(dialog.FileName));
+            LoadProgramFromText(File.ReadAllText(dialog.FileName));
         }
     }
 
@@ -89,6 +110,18 @@ public class MainViewModel : ViewModelBase
 
     private void RunProgram(object? o)
     {
+        LoadProgramFromText(o);
+
+        if (Program == null) return;
+        Trace = Program.Run(_board);
+        StringBuilder sb = new();
+        sb.Append($"Textual trace: {Program.TextualTrace}\nEnd state: {_board}\n");
+        if (EndPosition.HasValue) sb.Append(_board.IsInEndPosition() ? "Congratulations! You solved the Exercise." : "Not quite! Try again.");
+        Output = sb.ToString();
+    }
+
+    private void LoadProgramFromText(object? o)
+    {
         try
         {
             Program = ProgramParser.ParseString(o as string ?? "");
@@ -98,13 +131,7 @@ public class MainViewModel : ViewModelBase
             Program = null;
             Output = $"Error parsing program: {e.Message}";
         }
-
-        if (Program == null) return;
-        Trace = Program.Run(_board);
-        StringBuilder sb = new();
-        sb.Append($"Textual trace: {Program.TextualTrace}\nEnd state: {_board}\n");
-        if (EndPosition.HasValue) sb.Append(_board.IsInEndPosition() ? "Congratulations! You solved the Exercise." : "Not quite! Try again.");
-        Output = sb.ToString();
+        CommandsText = Program?.ToString() ?? "";
     }
 
     private void ResetBoard(object? o)
@@ -133,6 +160,7 @@ public class MainViewModel : ViewModelBase
     {
         GridParser.ParseFromString(input, out var size, out var walls, out var endPosition);
         _board.Reset(size, walls, endPosition);
+        ResetBoard(null);
     }
 
     private void OutputMetrics(object? o)
