@@ -12,10 +12,10 @@ public class EduBoard : INotifyPropertyChanged
     private List<Position> _walls;
     private Position? _endPosition;
 
-    public EduBoard(int size, IEnumerable<Position> wallPositions, Position? endPosition = null)
+    public EduBoard(int size, IEnumerable<Position>? wallPositions, Position? endPosition = null)
     {
         Size = size;
-        _walls = wallPositions.ToList();
+        _walls = wallPositions?.ToList() ?? new List<Position>();
         _endPosition = endPosition;
     }
 
@@ -34,7 +34,7 @@ public class EduBoard : INotifyPropertyChanged
         Direction = Direction.East;
 
         if (wallPositions != null) Walls = wallPositions.ToList();
-        if (endPosition != null) _endPosition = endPosition;
+        if (endPosition != null) EndPosition = endPosition;
     }
 
     public Position Position
@@ -59,6 +59,12 @@ public class EduBoard : INotifyPropertyChanged
     {
         get => _walls;
         set => SetField(ref _walls, value);
+    }
+
+    public Position? EndPosition
+    {
+        get => _endPosition;
+        set => SetField(ref _endPosition, value);
     }
 
     public bool IsWallAhead()

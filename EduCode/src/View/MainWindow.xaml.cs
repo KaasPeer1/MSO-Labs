@@ -71,8 +71,9 @@ public class BoardRenderer : INotifyPropertyChanged
         DrawWalls(context);
         DrawBorder(context);
         DrawGridLines(context);
-        DrawCharacter(context);
+        DrawEndPosition(context);
         DrawTrace(context);
+        DrawCharacter(context);
     }
 
     private void DrawWalls(DrawingContext context)
@@ -116,6 +117,17 @@ public class BoardRenderer : INotifyPropertyChanged
 
         context.DrawEllipse(Brushes.Red, pen, center, xyRadius, xyRadius);
         context.DrawLine(pen, center, center + GetDirectionVector() * xyRadius);
+    }
+
+    private void DrawEndPosition(DrawingContext context)
+    {
+        var endPosition = _viewModel.EndPosition;
+        if (endPosition == null) return;
+
+        Point center = GetCenterPoint(endPosition.Value);
+        int xyRadius = _width / _viewModel.Size / 3;
+
+        context.DrawEllipse(Brushes.Green, null, center, xyRadius, xyRadius);
     }
 
     private void DrawTrace(DrawingContext context)

@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -13,7 +14,7 @@ namespace EduCode.ViewModel;
 
 public class MainViewModel : ViewModelBase
 {
-    private readonly EduBoard _board = new(10, new Position[] { new Position(3, 0) });
+    private readonly EduBoard _board = new(5, null);
     private EduProgram? _program;
     private string _output = "";
     private string _commandsText = "";
@@ -28,6 +29,7 @@ public class MainViewModel : ViewModelBase
     public Direction Direction => _board.Direction;
     public int Size => _board.Size;
     public List<Position> Walls => _board.Walls;
+    public Position? EndPosition => _board.EndPosition;
 
     public EduProgram? Program
     {
@@ -98,14 +100,17 @@ public class MainViewModel : ViewModelBase
         }
 
         if (Program == null) return;
-        _trace = Program.Run(_board);
-        Output = $"Textual trace: {Program.TextualTrace}\nEnd state: {_board}";
+        Trace = Program.Run(_board);
+        StringBuilder sb = new();
+        sb.Append($"Textual trace: {Program.TextualTrace}\nEnd state: {_board}\n");
+        if (EndPosition.HasValue) sb.Append(_board.IsInEndPosition() ? "Congratulations! You solved the Exercise." : "Not quite! Try again.");
+        Output = sb.ToString();
     }
 
     private void ResetBoard(object? o)
     {
         _board.Reset();
-        _trace = null;
+        Trace = null;
         Output = "";
     }
 
