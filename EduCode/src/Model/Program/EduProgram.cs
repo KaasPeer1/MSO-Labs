@@ -90,21 +90,21 @@ public class EduProgram
             {
                 sb.Append(indent);
                 sb.Append($"Repeat {repeatCommand.Times} times");
-                sb.Append(Environment.NewLine);
+                sb.Append('\n');
                 sb.Append(BuildBlock(repeatCommand.Commands, indentLevel + 1));
             }
             else if (command is RepeatUntilCommand repeatUntilCommand)
             {
                 sb.Append(indent);
                 sb.Append($"Repeat until {repeatUntilCommand.Condition}");
-                sb.Append(Environment.NewLine);
+                sb.Append('\n');
                 sb.Append(BuildBlock(repeatUntilCommand.Commands, indentLevel + 1));
             }
             else
             {
                 sb.Append(indent);
                 sb.Append(command);
-                sb.Append(Environment.NewLine);
+                sb.Append('\n');
             }
         }
 

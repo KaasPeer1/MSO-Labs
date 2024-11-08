@@ -7,16 +7,10 @@ namespace EduCode.Model.Program;
 
 public class ProgramParser
 {
-    public static EduProgram ParseFile(string path)
-    {
-        string[] lines = File.ReadAllLines(path).Where(arg => !string.IsNullOrWhiteSpace(arg)).ToArray();
-        return Parse(lines);
-    }
-
     public static EduProgram? ParseString(string program)
     {
         if (string.IsNullOrWhiteSpace(program)) return null;
-        string[] lines = program.Split(Environment.NewLine).Where(arg => !string.IsNullOrWhiteSpace(arg)).ToArray();
+        string[] lines = program.Split('\n').Where(arg => !string.IsNullOrWhiteSpace(arg)).ToArray();
         return Parse(lines);
     }
 

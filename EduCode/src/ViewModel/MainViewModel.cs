@@ -64,7 +64,7 @@ public class MainViewModel : ViewModelBase
     public ICommand ResetCommand => new DelegateCommand(ResetBoard);
     public ICommand MetricsCommand => new DelegateCommand(OutputMetrics);
 
-    private void SaveProgram(object? o)
+    public void SaveProgram(object? o)
     {
         LoadProgramFromText(o);
         if (Program == null)
@@ -84,7 +84,7 @@ public class MainViewModel : ViewModelBase
         }
     }
 
-    private void LoadProgramFromFile(object? o)
+    public void LoadProgramFromFile(object? o)
     {
         var dialog = new OpenFileDialog
         {
@@ -97,7 +97,7 @@ public class MainViewModel : ViewModelBase
         }
     }
 
-    private void LoadProgram(object? o)
+    public void LoadProgram(object? o)
     {
         Program = (o as string) switch
         {
@@ -109,7 +109,7 @@ public class MainViewModel : ViewModelBase
         CommandsText = Program?.ToString() ?? "";
     }
 
-    private void RunProgram(object? o)
+    public void RunProgram(object? o)
     {
         LoadProgramFromText(o);
 
@@ -146,14 +146,14 @@ public class MainViewModel : ViewModelBase
         CommandsText = Program?.ToString() ?? "";
     }
 
-    private void ResetBoard(object? o)
+    public void ResetBoard(object? o)
     {
         _board.Reset();
         Trace = null;
         Output = "";
     }
 
-    private void LoadExerciseFromFile(object? o)
+    public void LoadExerciseFromFile(object? o)
     {
         LoadProgram("");
 
@@ -175,7 +175,7 @@ public class MainViewModel : ViewModelBase
         ResetBoard(null);
     }
 
-    private void OutputMetrics(object? o)
+    public void OutputMetrics(object? o)
     {
         if (Program == null) return;
         Output = $"Command count: {Program.CommandCount}\nMaximum command depth: {Program.MaximumDepth}";

@@ -6,17 +6,17 @@ namespace EduCode.Model.Command;
 
 public class RepeatUntilCommand : IEduCommand
 {
-    private readonly EduCondition _condition;
+    private readonly IEduCondition _condition;
     private readonly List<IEduCommand> _commands;
 
-    public RepeatUntilCommand(EduCondition condition, List<IEduCommand> commands)
+    public RepeatUntilCommand(IEduCondition condition, List<IEduCommand> commands)
     {
         _condition = condition;
         _commands = commands;
     }
 
     public List<IEduCommand> Commands => _commands;
-    public EduCondition Condition => _condition;
+    public IEduCondition Condition => _condition;
 
     public void Execute(EduBoard board, ref List<Position> trace)
     {

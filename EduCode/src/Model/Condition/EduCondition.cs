@@ -2,31 +2,25 @@
 
 namespace EduCode.Model.Condition;
 
-public class EduCondition
+public class EduCondition : IEduCondition
 {
-    private Predicate<EduBoard> _predicate;
+    private readonly Predicate<EduBoard> _predicate;
 
     private EduCondition(Predicate<EduBoard> predicate)
     {
         _predicate = predicate;
     }
 
-    public string StringRepresentation { get; set; }
+    public string? StringRepresentation { get; set; }
 
     public static EduCondition Parse(string condition)
     {
-        EduCondition result;
-        switch (condition)
+        var result = condition switch
         {
-            case "WallAhead":
-                result = new EduCondition(board => board.WallAhead());
-                break;
-            case "GridEdge":
-                result = new EduCondition(board => board.GridEdge());
-                break;
-            default:
-                throw new ArgumentException("Invalid condition");
-        }
+            "WallAhead" => new EduCondition(board => board.WallAhead()),
+            "GridEdge" => new EduCondition(board => board.GridEdge()),
+            _ => throw new ArgumentException("Invalid condition")
+        };
         result.StringRepresentation = condition;
         return result;
     }
@@ -38,6 +32,6 @@ public class EduCondition
 
     public override string ToString()
     {
-        return StringRepresentation;
+        return StringRepresentation ?? "";
     }
 }
