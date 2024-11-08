@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using EduCode.Model.Exceptions;
 using EduCode.Model.Location;
 
 namespace EduCode.Model.Board;
@@ -40,7 +41,12 @@ public class EduBoard : INotifyPropertyChanged
     public Position Position
     {
         get => _position;
-        set => SetField(ref _position, ClampToBoard(value));
+        set
+        {
+            if (IsOutOfGrid(value)) throw new PositionOutOfGridException("You can't go there!");
+            if (IsWallAt(value)) throw new PositionIsWallException("You can't go there!");
+            SetField(ref _position, value);
+        }
     }
 
     public Direction Direction
@@ -70,8 +76,23 @@ public class EduBoard : INotifyPropertyChanged
     public bool IsWallAhead()
     {
         var ahead = Position + Vector.FromDirection(Direction);
-        var aheadIsWall = Walls.Contains(ahead);
-        return aheadIsWall;
+        return IsWallAt(ahead);
+    }
+
+    public bool IsGridEdgeAhead()
+    {
+        var ahead = Position + Vector.FromDirection(Direction);
+        return IsOutOfGrid(ahead);
+    }
+
+    private bool IsWallAt(Position position)
+    {
+        return Walls.Contains(position);
+    }
+
+    private bool IsOutOfGrid(Position position)
+    {
+        return position.X < 0 || position.X >= Size || position.Y < 0 || position.Y >= Size;
     }
 
     public bool IsInEndPosition()
@@ -83,14 +104,6 @@ public class EduBoard : INotifyPropertyChanged
     public override string ToString()
     {
         return $"{_position} facing {Direction.ToString().ToLower()}";
-    }
-
-    private Position ClampToBoard(Position position)
-    {
-        return new Position(
-            Math.Clamp(position.X, 0, Size - 1),
-            Math.Clamp(position.Y, 0, Size - 1)
-        );
     }
 
     #region INotifyPropertyChanged implementation

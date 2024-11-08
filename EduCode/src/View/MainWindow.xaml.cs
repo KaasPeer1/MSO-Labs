@@ -133,11 +133,11 @@ public class BoardRenderer : INotifyPropertyChanged
     private void DrawTrace(DrawingContext context)
     {
         var trace = _viewModel.Trace;
-        if (trace == null || trace.Length == 0) return;
+        if (trace == null || trace.Count == 0) return;
 
         Pen pen = new(Brushes.Blue, 5);
 
-        for (int i = 1; i < trace.Length; i++)
+        for (int i = 1; i < trace.Count; i++)
         {
             var from = trace[i - 1];
             var to = trace[i];

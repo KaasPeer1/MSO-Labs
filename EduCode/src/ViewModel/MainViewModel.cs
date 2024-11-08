@@ -5,6 +5,7 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
 using EduCode.Model.Board;
+using EduCode.Model.Exceptions;
 using EduCode.Model.Location;
 using EduCode.Model.Program;
 using EduCode.ViewModel.Command;
@@ -18,7 +19,7 @@ public class MainViewModel : ViewModelBase
     private EduProgram? _program;
     private string _output = "";
     private string _commandsText = "";
-    private Position[]? _trace;
+    private List<Position>? _trace;
 
     public MainViewModel()
     {
@@ -49,10 +50,10 @@ public class MainViewModel : ViewModelBase
         private set => SetField(ref _commandsText, value);
     }
 
-    public Position[]? Trace
+    public List<Position>? Trace
     {
         get => _trace;
-        private set => SetField(ref _trace, value);
+        set => SetField(ref _trace, value);
     }
 
     public ICommand SaveProgramCommand => new DelegateCommand(SaveProgram);
@@ -113,7 +114,18 @@ public class MainViewModel : ViewModelBase
         LoadProgramFromText(o);
 
         if (Program == null) return;
-        Trace = Program.Run(_board);
+
+        List<Position> trace = new();
+        try
+        {
+            Program.Run(_board, ref trace);
+            Trace = trace;
+        } catch (Exception e) when (e is PositionOutOfGridException or PositionIsWallException)
+        {
+            Trace = trace;
+            Output = e.Message;
+            return;
+        }
         StringBuilder sb = new();
         sb.Append($"Textual trace: {Program.TextualTrace}\nEnd state: {_board}\n");
         if (EndPosition.HasValue) sb.Append(_board.IsInEndPosition() ? "Congratulations! You solved the Exercise." : "Not quite! Try again.");

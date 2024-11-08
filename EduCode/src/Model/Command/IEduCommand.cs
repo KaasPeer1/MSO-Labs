@@ -5,6 +5,6 @@ namespace EduCode.Model.Command;
 
 public interface IEduCommand
 {
-    public Position[] Execute(EduBoard board);
+    public void Execute(EduBoard board, ref List<Position> trace);
     public int MaximumDepth { get; }
 }

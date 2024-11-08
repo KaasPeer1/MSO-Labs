@@ -24,14 +24,12 @@ public class RepeatCommand : IEduCommand
 
     public int MaximumDepth => _commands.Count == 0 ? 0 : _commands.Max(c => c.MaximumDepth) + 1;
 
-    public Position[] Execute(EduBoard board)
+    public void Execute(EduBoard board, ref List<Position> trace)
     {
-        List<Position> positions = new ();
         foreach (var command in _commands)
         {
-            positions.AddRange(command.Execute(board));
+            command.Execute(board, ref trace);
         }
-        return positions.ToArray();
     }
 
     public override string ToString()

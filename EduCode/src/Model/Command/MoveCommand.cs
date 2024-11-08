@@ -18,15 +18,15 @@ public class MoveCommand : IEduCommand
 
     public int MaximumDepth => 0;
 
-    public Position[] Execute(EduBoard board)
+    public void Execute(EduBoard board, ref List<Position> trace)
     {
         var remaining = _amount;
-        while (!board.IsWallAhead() && remaining > 0)
+        while (remaining > 0)
         {
             board.Position += Vector.FromDirection(board.Direction);
+            trace.Add(board.Position);
             remaining--;
         }
-        return new[] {board.Position};
     }
 
     public override string ToString()
