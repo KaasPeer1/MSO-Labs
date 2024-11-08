@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Text.RegularExpressions;
 using EduCode.Model.Command;
+using EduCode.Model.Condition;
 
 namespace EduCode.Model.Program;
 
@@ -72,6 +73,7 @@ public class ProgramParser
             "Move" => ParseMove(trimmedLine),
             "Turn" => ParseTurn(trimmedLine),
             "Repeat" => ParseRepeat(trimmedLine, lines, indentStack, ref currentLineIndex),
+            "RepeatUntil" => ParseRepeatUntil(trimmedLine, lines, indentStack, ref currentLineIndex),
             _ => throw new FormatException("Invalid command")
         };
     }
@@ -104,6 +106,17 @@ public class ProgramParser
         var block = ParseBlock(lines, indentStack, ref currentLineIndex);
         currentLineIndex--;
         return new RepeatCommand(count, block);
+    }
+
+    private static IEduCommand ParseRepeatUntil(string line, string[] lines, Stack<int> indentStack, ref int currentLineIndex)
+    {
+        indentStack.Push(GetIndentation(lines[currentLineIndex + 1]));
+        currentLineIndex++;
+
+        var condition = line.Split(' ')[1];
+        var block = ParseBlock(lines, indentStack, ref currentLineIndex);
+        currentLineIndex--;
+        return new RepeatUntilCommand(EduCondition.Parse(condition), block);
     }
 
     private static int GetIndentation(string line)

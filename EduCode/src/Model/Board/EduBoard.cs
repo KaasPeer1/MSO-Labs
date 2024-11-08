@@ -73,13 +73,13 @@ public class EduBoard : INotifyPropertyChanged
         set => SetField(ref _endPosition, value);
     }
 
-    public bool IsWallAhead()
+    public bool WallAhead()
     {
         var ahead = Position + Vector.FromDirection(Direction);
         return IsWallAt(ahead);
     }
 
-    public bool IsGridEdgeAhead()
+    public bool GridEdge()
     {
         var ahead = Position + Vector.FromDirection(Direction);
         return IsOutOfGrid(ahead);
