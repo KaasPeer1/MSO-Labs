@@ -1,0 +1,9 @@
+Repeat 3 times
+    Repeat until GridEdge
+        Move 1
+    Turn right
+Repeat 3 times
+    Repeat until WallAhead
+        Move 1
+    Turn right
+Move 2
